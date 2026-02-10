@@ -1,10 +1,15 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MapPin, Maximize, Bed, Bath, Car, Award, Phone, Mail, ArrowLeft, Check } from 'lucide-react'
 import { properties, getPropertyBySlug, formatPrice, formatArea } from '@/data/properties'
 import PropertyGallery from '@/components/PropertyGallery'
 import BrokerTools from '@/components/BrokerTools'
+
+// ✅ Next 15: params vem tipado como Promise em alguns cenários de build (Vercel)
+type PageProps = {
+  params: Promise<{ slug: string }>
+}
 
 // Gerar páginas estáticas para todos os imóveis
 export async function generateStaticParams() {
@@ -14,8 +19,9 @@ export async function generateStaticParams() {
 }
 
 // Gerar metadata dinâmica para SEO
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const property = getPropertyBySlug(params.slug)
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const property = getPropertyBySlug(slug)
 
   if (!property) {
     return {
@@ -43,8 +49,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function PropertyPage({ params }: { params: { slug: string } }) {
-  const property = getPropertyBySlug(params.slug)
+export default async function PropertyPage({ params }: PageProps) {
+  const { slug } = await params
+  const property = getPropertyBySlug(slug)
 
   if (!property) {
     notFound()
@@ -55,7 +62,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
       moradia: 'Moradia',
       apartamento: 'Apartamento',
       terreno: 'Terreno',
-      comercial: 'Comercial'
+      comercial: 'Comercial',
     }
     return types[type] || type
   }
@@ -67,7 +74,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
       {/* Breadcrumb e Header */}
       <section className="pt-32 pb-8 bg-white">
         <div className="container-premium">
-          <Link 
+          <Link
             href="/imoveis"
             className="inline-flex items-center gap-2 text-navy-600 hover:text-gold-500 transition-colors mb-6"
           >
@@ -100,12 +107,11 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
                   <span className="text-lg">{property.location.fullAddress}</span>
                 </div>
                 <p className="text-5xl font-serif font-bold text-gold-500">
-                  {property.price === 0 
-                    ? 'Sob Consulta' 
-                    : isRental 
+                  {property.price === 0
+                    ? 'Sob Consulta'
+                    : isRental
                       ? `${formatPrice(property.price)}/mês`
-                      : formatPrice(property.price)
-                  }
+                      : formatPrice(property.price)}
                 </p>
               </div>
 
@@ -154,9 +160,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
 
               {/* Descrição Detalhada */}
               <div>
-                <h2 className="text-3xl font-serif font-bold text-navy-950 mb-6">
-                  Sobre Este Imóvel
-                </h2>
+                <h2 className="text-3xl font-serif font-bold text-navy-950 mb-6">Sobre Este Imóvel</h2>
                 <div className="prose prose-lg max-w-none text-navy-700 leading-relaxed space-y-4">
                   {property.longDescription.split('\n\n').map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
@@ -202,9 +206,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
               <div className="sticky top-32 space-y-6">
                 {/* Card de Contacto */}
                 <div className="bg-navy-950 text-white p-8 space-y-6">
-                  <h3 className="text-2xl font-serif font-bold mb-4">
-                    Interessado neste Imóvel?
-                  </h3>
+                  <h3 className="text-2xl font-serif font-bold mb-4">Interessado neste Imóvel?</h3>
                   <p className="text-silver-200">
                     Entre em contacto connosco para agendar uma visita ou obter mais informações.
                   </p>
@@ -238,9 +240,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
                   </Link>
 
                   <div className="pt-6 border-t border-white/20 text-center">
-                    <p className="text-sm text-silver-300">
-                      AMI 17398 | Mediação Imobiliária Certificada
-                    </p>
+                    <p className="text-sm text-silver-300">AMI 17398 | Mediação Imobiliária Certificada</p>
                   </div>
                 </div>
 
@@ -250,11 +250,15 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-navy-600">Referência:</span>
-                      <span className="font-semibold text-navy-950">QV-{property.id.padStart(4, '0')}</span>
+                      <span className="font-semibold text-navy-950">
+                        QV-{property.id.padStart(4, '0')}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-navy-600">Tipo:</span>
-                      <span className="font-semibold text-navy-950">{getPropertyTypeLabel(property.type)}</span>
+                      <span className="font-semibold text-navy-950">
+                        {getPropertyTypeLabel(property.type)}
+                      </span>
                     </div>
                     {property.features.condition && (
                       <div className="flex justify-between">
@@ -276,12 +280,10 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
       {/* CTA Final */}
       <section className="py-16 bg-navy-950 text-white">
         <div className="container-premium text-center">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
-            Agende a Sua Visita Hoje
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Agende a Sua Visita Hoje</h2>
           <p className="text-xl text-silver-200 mb-8 max-w-2xl mx-auto">
-            Não perca esta oportunidade única. Entre em contacto connosco
-            e descubra tudo o que este imóvel tem para oferecer.
+            Não perca esta oportunidade única. Entre em contacto connosco e descubra tudo o que este imóvel
+            tem para oferecer.
           </p>
           <Link href="/contactos" className="btn-gold text-lg">
             Contacte-nos Agora
