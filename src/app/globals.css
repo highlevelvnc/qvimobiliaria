@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-playfair: 'Playfair Display', Georgia, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans text-navy-900 bg-white antialiased;
+  }
+
+  /* Ocultar cursor padrão no desktop para usar o customizado */
+  @media (min-width: 768px) {
+    body {
+      cursor: none;
+    }
+    
+    a, button, [role="button"] {
+      cursor: none;
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  /* Botão Premium */
+  .btn-premium {
+    @apply inline-flex items-center justify-center px-8 py-4 
+           bg-navy-950 text-white font-medium 
+           hover:bg-navy-800 transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-premium-outline {
+    @apply inline-flex items-center justify-center px-8 py-4 
+           border-2 border-navy-950 text-navy-950 font-medium 
+           hover:bg-navy-950 hover:text-white transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center px-8 py-4 
+           bg-gold-500 text-navy-950 font-semibold 
+           hover:bg-gold-600 transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-gold-600 focus:ring-offset-2;
+  }
+
+  /* Container Premium */
+  .container-premium {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Card Premium */
+  .card-premium {
+    @apply bg-white border border-silver-200 
+           hover:shadow-2xl hover:border-gold-500 
+           transition-all duration-500 cursor-pointer;
+  }
+
+  /* Input Premium */
+  .input-premium {
+    @apply w-full px-4 py-3 border border-silver-300 
+           focus:border-gold-500 focus:ring-2 focus:ring-gold-500 focus:ring-opacity-20
+           transition-all duration-200 outline-none;
+  }
+
+  /* Efeito Gradient Premium */
+  .gradient-premium {
+    @apply bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800;
+  }
+
+  .gradient-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/50 to-transparent;
+  }
+
+  /* Linha Dourada Decorativa */
+  .gold-divider {
+    @apply w-20 h-1 bg-gold-500 mb-6;
+  }
+}
+
+@layer utilities {
+  /* Animação suave de entrada */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Texto com degradê dourado */
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent;
+  }
+
+  /* Hover com escala suave */
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  /* Sombra premium */
+  .shadow-premium {
+    box-shadow: 0 10px 40px -10px rgba(10, 25, 41, 0.15);
+  }
+
+  .shadow-premium-lg {
+    box-shadow: 0 20px 60px -15px rgba(10, 25, 41, 0.25);
+  }
+}
+
+/* Customização da scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-silver-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-navy-300 hover:bg-navy-400 rounded-full;
+}
+
+/* Loading spinner premium */
+.spinner-premium {
+  border: 3px solid rgba(201, 184, 122, 0.2);
+  border-top-color: #c9b87a;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
